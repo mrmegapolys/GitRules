@@ -1,9 +1,5 @@
 package com.megapolys.gitrules.spmf
 
-import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.FPNode
-import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.FPTree
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets
-import ca.pfv.spmf.tools.MemoryLogger
 import com.megapolys.gitrules.Commit
 import java.lang.System.currentTimeMillis
 import kotlin.math.min
@@ -17,11 +13,11 @@ class FpGrowth(private val minSupport: Int) {
     private val itemsets = Itemsets()
 
     private val itemsetBuffer = arrayOfNulls<String>(BUFFERS_SIZE)
-    private val fpNodeTempBuffer = arrayOfNulls<FPNode>(BUFFERS_SIZE)
+    private val fpNodeTempBuffer = arrayOfNulls<FpNode>(BUFFERS_SIZE)
 
     fun runWithStatistics(commits: Collection<Commit>): Itemsets {
         val startTimestamp = currentTimeMillis()
-        MemoryLogger.getInstance().apply {
+        MemoryLogger.apply {
             reset()
             checkMemory()
         }
@@ -29,14 +25,14 @@ class FpGrowth(private val minSupport: Int) {
         val itemsets = run(commits)
 
         val endTimestamp = currentTimeMillis()
-        MemoryLogger.getInstance().checkMemory()
+        MemoryLogger.checkMemory()
 
         println(
             """
             ================  MINER STATISTICS ================
             Transactions count from database : ${commits.size}
-            Frequent itemsets count : ${itemsets.count()}
-            Max memory usage: ${MemoryLogger.getInstance().maxMemory} mb 
+            Frequent itemsets count : ${itemsets.count}
+            Max memory usage: ${MemoryLogger.maxMemory} mb 
             Total time ~ ${endTimestamp - startTimestamp} ms
             ===================================================
             """.trimIndent()
@@ -57,7 +53,7 @@ class FpGrowth(private val minSupport: Int) {
     }
 
     private fun fpGrowth(
-        tree: FPTree,
+        tree: FpTree,
         prefix: Array<String?>,
         prefixLength: Int,
         prefixSupport: Int,
@@ -89,13 +85,13 @@ class FpGrowth(private val minSupport: Int) {
                 continue
             }
 
-            val prefixPaths = mutableListOf<List<FPNode>>()
-            var path = tree.mapItemNodes[item]
+            val prefixPaths = mutableListOf<List<FpNode>>()
+            var path = tree.mapItemFirstNode[item]
 
             val supportMapBeta = mutableMapOf<String, Int>()
 
             while (path != null) {
-                if (path.parent.itemID == null) {
+                if (path.parent?.itemName == ROOT) {
                     path = path.nodeLink
                     continue
                 }
@@ -103,20 +99,20 @@ class FpGrowth(private val minSupport: Int) {
                 val prefixPath = mutableListOf(path)
                 val pathCount = path.counter
 
-                var parent = path.parent
-                while (parent.itemID != null) {
+                var parent = checkNotNull(path.parent)
+                while (parent.itemName != ROOT) {
                     prefixPath.add(parent)
 
-                    supportMapBeta[parent.itemID] =
-                        supportMapBeta.getOrZero(parent.itemID) + pathCount
+                    supportMapBeta[parent.itemName] =
+                        supportMapBeta.getOrZero(parent.itemName) + pathCount
 
-                    parent = parent.parent
+                    parent = checkNotNull(parent.parent)
                 }
                 prefixPaths.add(prefixPath)
                 path = path.nodeLink
             }
 
-            val treeBeta = FPTree().apply {
+            val treeBeta = FpTree().apply {
                 prefixPaths.forEach { addPrefixPath(it, supportMapBeta, minSupport) }
             }
             if (treeBeta.root.children.size > 0) {
@@ -126,7 +122,7 @@ class FpGrowth(private val minSupport: Int) {
         }
     }
 
-    private fun calculateSinglePathLength(tree: FPTree): Int {
+    private fun calculateSinglePathLength(tree: FpTree): Int {
         if (tree.root.children.size > 1) return 0
 
         var position = 0
@@ -150,7 +146,7 @@ class FpGrowth(private val minSupport: Int) {
     private fun createFpTree(
         commits: Collection<Commit>,
         supportMap: Map<String, Int>
-    ) = FPTree().apply {
+    ) = FpTree().apply {
         commits.map { commit ->
             commit.files
                 .filter { supportMap.getOrZero(it) >= minSupport }
@@ -170,7 +166,7 @@ class FpGrowth(private val minSupport: Int) {
     }
 
     private fun saveAllCombinationsOfPrefixPath(
-        fpNodeTempBuffer: Array<FPNode?>,
+        fpNodeTempBuffer: Array<FpNode?>,
         position: Int,
         prefix: Array<String?>,
         prefixLength: Int
@@ -188,7 +184,7 @@ class FpGrowth(private val minSupport: Int) {
                 }
 
                 with(checkNotNull(fpNodeTempBuffer[j])) {
-                    prefix[newPrefixLength++] = itemID
+                    prefix[newPrefixLength++] = itemName
                     support = counter
                 }
             }

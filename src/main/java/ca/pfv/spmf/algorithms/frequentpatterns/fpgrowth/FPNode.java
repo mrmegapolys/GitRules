@@ -43,7 +43,7 @@ public class FPNode {
 	/**
 	 * constructor
 	 */
-	FPNode(){
+	public FPNode(){
 		
 	}
 
@@ -51,7 +51,7 @@ public class FPNode {
 	 * Return the immediate child of this node having a given ID.
 	 * If there is no such child, return null;
 	 */
-	FPNode getChildWithID(String id) {
+	public FPNode getChildWithID(String id) {
 		// for each child node
 		for(FPNode child : children){
 			// if the id is the one that we are looking for
