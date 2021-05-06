@@ -1,10 +1,16 @@
 package com.megapolys.gitrules
 
-private const val FILENAME = "/Users/u18398407/Diploma/commits/th_full_hash.txt"
+import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth
+
+private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_hash.txt"
+private const val MIN_SUPPORT = 8
 
 fun main() {
-    val source = GitLogFileDataSource(FILENAME)
-    val commits = source.getCommits()
-    println(commits.first())
+    val commits = GitLogFileDataSource(INPUT_FILENAME)
+        .getCommits()
+    val algo = AlgoFPGrowth()
+    val itemsets = algo
+        .runAlgorithm(commits, MIN_SUPPORT)
 
+    algo.printStats()
 }
