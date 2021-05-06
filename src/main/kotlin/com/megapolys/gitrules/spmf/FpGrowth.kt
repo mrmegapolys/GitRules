@@ -7,8 +7,6 @@ import kotlin.math.min
 private const val MAX_PATTERN_LENGTH = 1000
 private const val BUFFERS_SIZE = 2000
 
-private const val PREFIX_LENGTH_WARNING = "Got to max pattern length: $MAX_PATTERN_LENGTH"
-
 class FpGrowth(private val minSupport: Int) {
     private val itemsets = Itemsets()
 
@@ -17,7 +15,7 @@ class FpGrowth(private val minSupport: Int) {
 
     fun runWithStatistics(commits: Collection<Commit>): Itemsets {
         val startTimestamp = currentTimeMillis()
-        MemoryLogger.apply {
+        MemoryLogger.run {
             reset()
             checkMemory()
         }
@@ -30,10 +28,10 @@ class FpGrowth(private val minSupport: Int) {
         println(
             """
             ================  MINER STATISTICS ================
-            Transactions count from database : ${commits.size}
-            Frequent itemsets count : ${itemsets.count}
+            Transactions count: ${commits.size}
+            Frequent itemsets count: ${itemsets.count}
             Max memory usage: ${MemoryLogger.maxMemory} mb 
-            Total time ~ ${endTimestamp - startTimestamp} ms
+            Total time: ${endTimestamp - startTimestamp} ms
             ===================================================
             """.trimIndent()
         )
@@ -52,6 +50,23 @@ class FpGrowth(private val minSupport: Int) {
         return itemsets
     }
 
+    private fun createSupportMap(commits: Collection<Commit>) =
+        commits
+            .flatMap(Commit::files)
+            .groupingBy { it }
+            .eachCount()
+
+    private fun createFpTree(
+        commits: Collection<Commit>,
+        supportMap: Map<String, Int>
+    ) = FpTree().apply {
+        commits.map { commit ->
+            commit.files
+                .filter { supportMap.getOrZero(it) >= minSupport }
+                .sortDescendingBySupport(supportMap)
+        }.forEach { addTransaction(it) }
+    }
+
     private fun fpGrowth(
         tree: FpTree,
         prefix: Array<String?>,
@@ -59,31 +74,22 @@ class FpGrowth(private val minSupport: Int) {
         prefixSupport: Int,
         supportMap: Map<String, Int>
     ) {
-        if (prefixLength == MAX_PATTERN_LENGTH) {
-            println(PREFIX_LENGTH_WARNING)
-            return
-        }
+        if (prefixLength == MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
 
         val singlePathLength = calculateSinglePathLength(tree)
-
         if (singlePathLength > 0) {
             saveAllCombinationsOfPrefixPath(fpNodeTempBuffer, singlePathLength, prefix, prefixLength)
             return
         }
 
-        for (i in tree.headerList.indices.reversed()) {
-            val item = tree.headerList[i]
-
-            val support = checkNotNull(supportMap[item])
+        for (item in tree.headerList.reversed()) {
+            val itemSupport = checkNotNull(supportMap[item])
 
             prefix[prefixLength] = item
-            val betaSupport = min(prefixSupport, support)
+            val betaSupport = min(prefixSupport, itemSupport)
             saveItemset(prefix, prefixLength + 1, betaSupport)
 
-            if (prefixLength + 1 >= MAX_PATTERN_LENGTH) {
-                println(PREFIX_LENGTH_WARNING)
-                continue
-            }
+            if (prefixLength + 1 >= MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
 
             val prefixPaths = mutableListOf<List<FpNode>>()
             var path = tree.mapItemFirstNode[item]
@@ -115,7 +121,7 @@ class FpGrowth(private val minSupport: Int) {
             val treeBeta = FpTree().apply {
                 prefixPaths.forEach { addPrefixPath(it, supportMapBeta, minSupport) }
             }
-            if (treeBeta.root.children.size > 0) {
+            if (treeBeta.root.children.isNotEmpty()) {
                 treeBeta.createHeaderList(supportMapBeta)
                 fpGrowth(treeBeta, prefix, prefixLength + 1, betaSupport, supportMapBeta)
             }
@@ -137,34 +143,6 @@ class FpGrowth(private val minSupport: Int) {
         }
     }
 
-    private fun createSupportMap(commits: Collection<Commit>) =
-        commits
-            .flatMap(Commit::files)
-            .groupingBy { it }
-            .eachCount()
-
-    private fun createFpTree(
-        commits: Collection<Commit>,
-        supportMap: Map<String, Int>
-    ) = FpTree().apply {
-        commits.map { commit ->
-            commit.files
-                .filter { supportMap.getOrZero(it) >= minSupport }
-                .sortDescendingBySupport(supportMap)
-        }.forEach { addTransaction(it) }
-    }
-
-    private fun saveItemset(itemsetArray: Array<String?>, itemsetLength: Int, support: Int) {
-        val files = itemsetArray
-            .copyOfRange(0, itemsetLength)
-            .toList()
-            .map { it as String }
-            .sorted()
-
-        val itemset = Itemset(files, support)
-        itemsets.addItemset(itemset, itemsetLength)
-    }
-
     private fun saveAllCombinationsOfPrefixPath(
         fpNodeTempBuffer: Array<FpNode?>,
         position: Int,
@@ -173,15 +151,12 @@ class FpGrowth(private val minSupport: Int) {
     ) {
         var support = 0
 
-        loop@ for (i in 1 until (1 shl position)) {
+        for (i in 1 until (1L shl position)) {
             var newPrefixLength = prefixLength
 
             for (j in 0 until position) {
-                if (i and (1 shl j) <= 0) continue
-                if (newPrefixLength == MAX_PATTERN_LENGTH) {
-                    println(PREFIX_LENGTH_WARNING)
-                    continue@loop
-                }
+                if (i and (1L shl j) <= 0) continue
+                if (newPrefixLength == MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
 
                 with(checkNotNull(fpNodeTempBuffer[j])) {
                     prefix[newPrefixLength++] = itemName
@@ -191,4 +166,20 @@ class FpGrowth(private val minSupport: Int) {
             saveItemset(prefix, newPrefixLength, support)
         }
     }
+
+    private fun saveItemset(filesArray: Array<String?>, itemsetLength: Int, support: Int) {
+        val files = filesArray
+            .copyOfRange(0, itemsetLength)
+            .map { it as String }
+            .sorted()
+
+        itemsets.addItemset(
+            itemset = Itemset(files, support),
+            level = itemsetLength
+        )
+    }
+}
+
+fun maxPatternLengthExceeded(): Nothing {
+    throw Exception("Exceeded max pattern length: $MAX_PATTERN_LENGTH")
 }

@@ -47,6 +47,7 @@ class FpTree {
 
                     currentNode.children.add(newNode)
                     currentNode = newNode
+
                     updateNodeLinks(newNode)
                 }
                 else -> {
@@ -66,12 +67,9 @@ class FpTree {
         mapItemFirstNode.putIfAbsent(itemName, newNode)
     }
 
-    fun createHeaderList(supportMap: Map<String, Int>) { //TODO refactor
+    fun createHeaderList(supportMap: Map<String, Int>) {
         headerList = mapItemFirstNode
             .keys
-            .sortedWith { id1: String, id2: String ->
-                val compare = supportMap.getOrZero(id2) - supportMap.getOrZero(id1)
-                if (compare == 0) id1.compareTo(id2) else compare
-            }
+            .sortDescendingBySupport(supportMap)
     }
 }

@@ -4,8 +4,8 @@ class FpNode(
     val itemName: String,
     val parent: FpNode?
 ) {
-    var nodeLink: FpNode? = null
     val children = mutableListOf<FpNode>()
+    var nodeLink: FpNode? = null
     var counter = 1
 
     fun findChildWithName(itemName: String) =
