@@ -6,11 +6,15 @@ private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_has
 private const val MIN_SUPPORT = 8
 
 fun main() {
+    val algo = AlgoFPGrowth()
+
     val commits = GitLogFileDataSource(INPUT_FILENAME)
         .getCommits()
-    val algo = AlgoFPGrowth()
     val itemsets = algo
         .runAlgorithm(commits, MIN_SUPPORT)
+        .levels
 
     algo.printStats()
+
+    CorrectnessChecker.checkVersusBaseline(itemsets)
 }

@@ -47,4 +47,8 @@ public class Itemsets {
 		}
 		levels.get(k).add(itemset);
 	}
+
+	public List<List<Itemset>> getLevels() {
+		return levels;
+	}
 }
