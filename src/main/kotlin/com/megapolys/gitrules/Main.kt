@@ -6,11 +6,9 @@ private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_has
 private const val MIN_SUPPORT = 8
 
 fun main() {
-    val algo = FpGrowth(MIN_SUPPORT)
-
     val commits = GitLogFileDataSource(INPUT_FILENAME)
         .getCommits()
-    val itemsets = algo
+    val itemsets = FpGrowth(MIN_SUPPORT)
         .runWithStatistics(commits)
         .levels
 

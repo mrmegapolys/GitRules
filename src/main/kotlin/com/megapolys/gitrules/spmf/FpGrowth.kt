@@ -6,7 +6,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets
 import ca.pfv.spmf.tools.MemoryLogger
 import com.megapolys.gitrules.Commit
 import java.lang.System.currentTimeMillis
-import kotlin.properties.Delegates.notNull
+import kotlin.math.min
 
 private const val MAX_PATTERN_LENGTH = 1000
 private const val BUFFERS_SIZE = 2000
@@ -44,7 +44,7 @@ class FpGrowth(private val minSupport: Int) {
         return itemsets
     }
 
-    fun run(commits: Collection<Commit>): Itemsets {
+    private fun run(commits: Collection<Commit>): Itemsets {
         val supportMap = createSupportMap(commits)
         val tree = createFpTree(commits, supportMap)
             .apply { createHeaderList(supportMap) }
@@ -61,130 +61,83 @@ class FpGrowth(private val minSupport: Int) {
         prefix: Array<String?>,
         prefixLength: Int,
         prefixSupport: Int,
-        mapSupport: Map<String, Int?>
+        supportMap: Map<String, Int>
     ) {
         if (prefixLength == MAX_PATTERN_LENGTH) {
+            println(PREFIX_LENGTH_WARNING)
             return
         }
 
-        // We will check if the FPtree contains a single path
-        var singlePath = true
-        // This variable is used to count the number of items in the single path
-        // if there is one
-        var position = 0
-        // if the root has more than one child, than it is not a single path
-        if (tree.root.children.size > 1) {
-            singlePath = false
-        } else {
+        val singlePathLength = calculateSinglePathLength(tree)
 
-            // Otherwise,
-            // if the root has exactly one child, we need to recursively check childs
-            // of the child to see if they also have one child
-            var currentNode = tree.root.children[0]
-            while (true) {
-                // if the current child has more than one child, it is not a single path!
-                if (currentNode.children.size > 1) {
-                    singlePath = false
-                    break
-                }
-                // otherwise, we copy the current item in the buffer and move to the child
-                // the buffer will be used to store all items in the path
-                fpNodeTempBuffer[position] = currentNode
-                position++
-                // if this node has no child, that means that this is the end of this path
-                // and it is a single path, so we break
-                if (currentNode.children.size == 0) {
-                    break
-                }
-                currentNode = currentNode.children[0]
-            }
+        if (singlePathLength > 0) {
+            saveAllCombinationsOfPrefixPath(fpNodeTempBuffer, singlePathLength, prefix, prefixLength)
+            return
         }
 
-        // Case 1: the FPtree contains a single path
-        if (singlePath) {
-            // We save the path, because it is a maximal itemset
-            saveAllCombinationsOfPrefixPath(fpNodeTempBuffer, position, prefix, prefixLength)
-        } else {
-            // For each frequent item in the header table list of the tree in reverse order.
-            for (i in tree.headerList.indices.reversed()) {
-                // get the item
-                val item = tree.headerList[i]
+        for (i in tree.headerList.indices.reversed()) {
+            val item = tree.headerList[i]
 
-                // get the item support
-                val support = mapSupport[item]!!
+            val support = checkNotNull(supportMap[item])
 
-                // Create Beta by concatening prefix Alpha by adding the current item to alpha
-                prefix[prefixLength] = item
+            prefix[prefixLength] = item
+            val betaSupport = min(prefixSupport, support)
+            saveItemset(prefix, prefixLength + 1, betaSupport)
 
-                // calculate the support of the new prefix beta
-                val betaSupport = Math.min(prefixSupport, support)
-
-                // save beta to the output file
-                saveItemset(prefix, prefixLength + 1, betaSupport)
-                if (prefixLength + 1 < MAX_PATTERN_LENGTH) {
-
-                    // === (A) Construct beta's conditional pattern base ===
-                    // It is a subdatabase which consists of the set of prefix paths
-                    // in the FP-tree co-occuring with the prefix pattern.
-                    val prefixPaths: MutableList<List<FPNode>> = ArrayList()
-                    var path = tree.mapItemNodes[item]
-
-                    // Map to count the support of items in the conditional prefix tree
-                    // Key: item   Value: support
-                    val mapSupportBeta: MutableMap<String, Int?> = HashMap()
-                    while (path != null) {
-                        // if the path is not just the root node
-                        if (path.parent.itemID != null) {
-                            // create the prefixpath
-                            val prefixPath: MutableList<FPNode> = ArrayList()
-                            // add this node.
-                            prefixPath.add(path) // NOTE: we add it just to keep its support,
-                            // actually it should not be part of the prefixPath
-
-                            // ####
-                            val pathCount = path.counter
-
-                            //Recursively add all the parents of this node.
-                            var parent = path.parent
-                            while (parent.itemID != null) {
-                                prefixPath.add(parent)
-
-                                // FOR EACH PATTERN WE ALSO UPDATE THE ITEM SUPPORT AT THE SAME TIME
-                                // if the first time we see that node id
-                                if (mapSupportBeta[parent.itemID] == null) {
-                                    // just add the path count
-                                    mapSupportBeta[parent.itemID] = pathCount
-                                } else {
-                                    // otherwise, make the sum with the value already stored
-                                    mapSupportBeta[parent.itemID] = mapSupportBeta[parent.itemID]!! + pathCount
-                                }
-                                parent = parent.parent
-                            }
-                            // add the path to the list of prefixpaths
-                            prefixPaths.add(prefixPath)
-                        }
-                        // We will look for the next prefixpath
-                        path = path.nodeLink
-                    }
-
-                    // (B) Construct beta's conditional FP-Tree
-                    // Create the tree.
-                    val treeBeta = FPTree()
-                    // Add each prefixpath in the FP-tree.
-                    for (prefixPath in prefixPaths) {
-                        treeBeta.addPrefixPath(prefixPath, mapSupportBeta, minSupport)
-                    }
-
-                    // Mine recursively the Beta tree if the root has child(s)
-                    if (treeBeta.root.children.size > 0) {
-
-                        // Create the header list.
-                        treeBeta.createHeaderList(mapSupportBeta)
-                        // recursive call
-                        fpGrowth(treeBeta, prefix, prefixLength + 1, betaSupport, mapSupportBeta)
-                    }
-                }
+            if (prefixLength + 1 >= MAX_PATTERN_LENGTH) {
+                println(PREFIX_LENGTH_WARNING)
+                continue
             }
+
+            val prefixPaths = mutableListOf<List<FPNode>>()
+            var path = tree.mapItemNodes[item]
+
+            val supportMapBeta = mutableMapOf<String, Int>()
+
+            while (path != null) {
+                if (path.parent.itemID == null) {
+                    path = path.nodeLink
+                    continue
+                }
+
+                val prefixPath = mutableListOf(path)
+                val pathCount = path.counter
+
+                var parent = path.parent
+                while (parent.itemID != null) {
+                    prefixPath.add(parent)
+
+                    supportMapBeta[parent.itemID] =
+                        supportMapBeta.getOrZero(parent.itemID) + pathCount
+
+                    parent = parent.parent
+                }
+                prefixPaths.add(prefixPath)
+                path = path.nodeLink
+            }
+
+            val treeBeta = FPTree().apply {
+                prefixPaths.forEach { addPrefixPath(it, supportMapBeta, minSupport) }
+            }
+            if (treeBeta.root.children.size > 0) {
+                treeBeta.createHeaderList(supportMapBeta)
+                fpGrowth(treeBeta, prefix, prefixLength + 1, betaSupport, supportMapBeta)
+            }
+        }
+    }
+
+    private fun calculateSinglePathLength(tree: FPTree): Int {
+        if (tree.root.children.size > 1) return 0
+
+        var position = 0
+        var currentNode = tree.root.children[0]
+        while (true) {
+            if (currentNode.children.size > 1) return 0
+
+            fpNodeTempBuffer[position++] = currentNode
+
+            if (currentNode.children.isEmpty()) return position
+            currentNode = currentNode.children[0]
         }
     }
 
@@ -242,5 +195,4 @@ class FpGrowth(private val minSupport: Int) {
             saveItemset(prefix, newPrefixLength, support)
         }
     }
-
 }
