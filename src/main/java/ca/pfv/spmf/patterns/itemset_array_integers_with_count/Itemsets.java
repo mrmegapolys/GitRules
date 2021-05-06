@@ -48,6 +48,14 @@ public class Itemsets {
 		levels.get(k).add(itemset);
 	}
 
+	public int count() {
+		int count = 0;
+		for (List<Itemset> level : levels) {
+			count += level.size();
+		}
+		return count;
+	}
+
 	public List<List<Itemset>> getLevels() {
 		return levels;
 	}

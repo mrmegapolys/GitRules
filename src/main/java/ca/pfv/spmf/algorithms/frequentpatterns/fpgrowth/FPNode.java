@@ -30,15 +30,15 @@ import java.util.List;
  * @author Philippe Fournier-Viger
  */
 public class FPNode {
-	String itemID = null;  // item id
-	int counter = 1;  // frequency counter  (a.k.a. support)
+	public String itemID = null;  // item id
+	public int counter = 1;  // frequency counter  (a.k.a. support)
 	
 	// the parent node of that node or null if it is the root
-	FPNode parent = null; 
+	public FPNode parent = null;
 	// the child nodes of that node
-	List<FPNode> children = new ArrayList<>();
+	public List<FPNode> children = new ArrayList<>();
 	
-	FPNode nodeLink = null; // link to next node with the same item id (for the header table).
+	public FPNode nodeLink = null; // link to next node with the same item id (for the header table).
 	
 	/**
 	 * constructor

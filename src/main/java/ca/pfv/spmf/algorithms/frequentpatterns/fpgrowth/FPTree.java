@@ -36,17 +36,17 @@ import java.util.Map;
  */
 public class FPTree {
 	// List of items in the header table
-	List<String> headerList = null;
+	public List<String> headerList = null;
 	
 	// List of pairs (item, frequency) of the header table
-	Map<String, FPNode> mapItemNodes = new HashMap<>();
+	public Map<String, FPNode> mapItemNodes = new HashMap<>();
 	
 	// Map that indicates the last node for each item using the node links
 	// key: item   value: an fp tree node
 	Map<String, FPNode> mapItemLastNode = new HashMap<>();
 	
 	// root of the tree
-	FPNode root = new FPNode(); // null node
+	public FPNode root = new FPNode(); // null node
 
 	/**
 	 * Constructor
@@ -113,7 +113,7 @@ public class FPTree {
 	 * @param mapSupportBeta  The frequencies of items in the prefixpaths
 	 * @param relativeMinsupp
 	 */
-	void addPrefixPath(List<FPNode> prefixPath, Map<String, Integer> mapSupportBeta, int relativeMinsupp) {
+	public void addPrefixPath(List<FPNode> prefixPath, Map<String, Integer> mapSupportBeta, int relativeMinsupp) {
 		// the first element of the prefix path contains the path support
 		int pathCount = prefixPath.get(0).counter;  
 		
@@ -152,7 +152,7 @@ public class FPTree {
 	 *  in descending order of support.
 	 * @param mapSupport the frequencies of each item (key: item  value: support)
 	 */
-	void createHeaderList(final Map<String, Integer> mapSupport) {
+	public void createHeaderList(final Map<String, Integer> mapSupport) {
 		// create an array to store the header list with
 		// all the items stored in the map received as parameter
 		headerList = new ArrayList<>(mapItemNodes.keySet());

@@ -22,6 +22,7 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
  import ca.pfv.spmf.tools.MemoryLogger;
  import com.megapolys.gitrules.Commit;
  import com.megapolys.gitrules.spmf.Itemset;
+ import org.jetbrains.annotations.NotNull;
 
  import java.util.ArrayList;
  import java.util.Arrays;
@@ -118,31 +119,7 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
          // Before inserting a transaction in the FPTree, we sort the items
          // by descending order of support.  We ignore items that
          // do not have the minimum support.
-         FPTree tree = new FPTree();
-
-         for (Commit commit : commits) {
-             List<String> transaction = new ArrayList<>();
-
-             // for each item in the transaction
-             for(String item : commit.getFiles()){
-                 if(mapSupport.get(item) >= minSupport){
-                     transaction.add(item);
-                 }
-             }
-             // sort item in the transaction by descending order of support
-             transaction.sort((item1, item2) -> {
-                 // compare the frequency
-                 int compare = mapSupport.get(item2) - mapSupport.get(item1);
-                 // if the same frequency, we check the lexical ordering!
-                 if (compare == 0) {
-                     return item1.compareTo(item2);
-                 }
-                 // otherwise, just use the frequency
-                 return compare;
-             });
-             // add the sorted transaction to the fptree.
-             tree.addTransaction(transaction);
-         }
+         FPTree tree = getFpTree(commits, mapSupport);
 
          // We create the header table for the tree using the calculated support of single items
          tree.createHeaderList(mapSupport);
@@ -171,6 +148,35 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
          return patterns;
      }
 
+     @NotNull
+     private FPTree getFpTree(Collection<Commit> commits, Map<String, Integer> mapSupport) {
+         FPTree tree = new FPTree();
+
+         for (Commit commit : commits) {
+             List<String> transaction = new ArrayList<>();
+
+             // for each item in the transaction
+             for(String item : commit.getFiles()){
+                 if(mapSupport.get(item) >= minSupport){
+                     transaction.add(item);
+                 }
+             }
+             // sort item in the transaction by descending order of support
+             transaction.sort((item1, item2) -> {
+                 // compare the frequency
+                 int compare = mapSupport.get(item2) - mapSupport.get(item1);
+                 // if the same frequency, we check the lexical ordering!
+                 if (compare == 0) {
+                     return item1.compareTo(item2);
+                 }
+                 // otherwise, just use the frequency
+                 return compare;
+             });
+             // add the sorted transaction to the fptree.
+             tree.addTransaction(transaction);
+         }
+         return tree;
+     }
 
 
      /**
