@@ -1,4 +1,4 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner.fpGrowth
 
 import java.lang.Runtime.getRuntime
 import kotlin.math.max

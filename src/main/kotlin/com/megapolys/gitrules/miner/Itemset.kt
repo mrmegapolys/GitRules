@@ -1,4 +1,4 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner
 
 data class Itemset(
     val items: Collection<String>,

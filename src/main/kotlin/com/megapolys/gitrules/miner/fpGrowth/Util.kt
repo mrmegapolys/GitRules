@@ -1,4 +1,4 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner.fpGrowth
 
 fun Map<String, Int>.getOrZero(fileName: String) = getOrDefault(fileName, 0)
 

@@ -1,6 +1,7 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner.fpGrowth
 
-import com.megapolys.gitrules.Commit
+import com.megapolys.gitrules.miner.Commit
+import com.megapolys.gitrules.miner.Itemset
 import java.lang.System.currentTimeMillis
 import kotlin.math.min
 

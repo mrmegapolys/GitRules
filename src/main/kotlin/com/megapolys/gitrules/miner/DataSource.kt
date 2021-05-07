@@ -1,11 +1,9 @@
-package com.megapolys.gitrules
+package com.megapolys.gitrules.miner
 
 import java.io.File
 
-class GitLogFileDataSource(
-    private val fileName: String
-) : DataSource {
-    override fun getCommits() =
+class DataSource(private val fileName: String) {
+    fun getCommits() =
         File(fileName)
             .readText()
             .split("\n\n")

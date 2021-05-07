@@ -1,4 +1,4 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner.fpGrowth
 
 class FpNode(
     val itemName: String,

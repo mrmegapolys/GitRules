@@ -1,4 +1,6 @@
-package com.megapolys.gitrules.spmf
+package com.megapolys.gitrules.miner.fpGrowth
+
+import com.megapolys.gitrules.miner.Itemset
 
 class Itemsets {
     val levels = mutableListOf<MutableList<Itemset>>()
