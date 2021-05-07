@@ -1,7 +1,7 @@
 package com.megapolys.gitrules.miner.fpGrowth
 
 import com.megapolys.gitrules.miner.Commit
-import com.megapolys.gitrules.miner.Itemset
+import com.megapolys.gitrules.model.Itemset
 import java.lang.System.currentTimeMillis
 import kotlin.math.min
 

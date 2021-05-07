@@ -1,6 +1,6 @@
 package com.megapolys.gitrules.miner.fpGrowth
 
-import com.megapolys.gitrules.miner.Itemset
+import com.megapolys.gitrules.model.Itemset
 
 class Itemsets {
     val levels = mutableListOf<MutableList<Itemset>>()
