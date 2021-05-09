@@ -7,13 +7,8 @@ class DataSource(private val fileName: String) {
         File(fileName)
             .readText()
             .split("\n\n")
+            .filter(String::isNotBlank)
             .map(String::trim)
-            .map { it.split("\n", limit = 2) }
-            .filter { it.size == 2 }
-            .map {
-                Commit(
-                    hash = it.first(),
-                    files = it.last().split("\n")
-                )
-            }
+            .map { it.split("\n") }
+            .map(::Commit)
 }

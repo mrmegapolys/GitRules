@@ -7,7 +7,7 @@ import com.megapolys.gitrules.miner.DataSource
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.server.RulesService
 
-private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_hash.txt"
+private const val INPUT_FILENAME = "input/th_full.txt"
 private const val MIN_SUPPORT = 8
 
 fun main() {
