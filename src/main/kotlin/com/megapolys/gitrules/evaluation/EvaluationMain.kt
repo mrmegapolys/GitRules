@@ -3,7 +3,7 @@ package com.megapolys.gitrules.evaluation
 import com.megapolys.gitrules.evaluation.strategies.ErrorPreventionEvaluation
 import com.megapolys.gitrules.evaluation.strategies.FalseAlarmEvaluation
 import com.megapolys.gitrules.evaluation.strategies.SourceCodeNavigationEvaluation
-import com.megapolys.gitrules.miner.DataSource
+import com.megapolys.gitrules.miner.dataSource.SimpleGitLogFileDataSource
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.server.RulesService
 
@@ -11,7 +11,7 @@ private const val INPUT_FILENAME = "input/th_full.txt"
 private const val MIN_SUPPORT = 8
 
 fun main() {
-    val commits = DataSource(INPUT_FILENAME).getCommits()
+    val commits = SimpleGitLogFileDataSource(INPUT_FILENAME).getCommits()
     val (train, test) = commits.run { dropLast(1000) to takeLast(1000) }
 
     val itemsets = FpGrowth(MIN_SUPPORT)
