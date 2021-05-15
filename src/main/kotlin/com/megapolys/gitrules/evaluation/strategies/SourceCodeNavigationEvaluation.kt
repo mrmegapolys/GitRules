@@ -1,5 +1,6 @@
-package com.megapolys.gitrules.evaluation
+package com.megapolys.gitrules.evaluation.strategies
 
+import com.megapolys.gitrules.evaluation.Result
 import com.megapolys.gitrules.miner.Commit
 import com.megapolys.gitrules.server.Rule
 import com.megapolys.gitrules.server.RulesService
@@ -7,7 +8,7 @@ import kotlin.Double.Companion.NaN
 
 class SourceCodeNavigationEvaluation(
     rulesService: RulesService
-) : EvaluationStrategy(rulesService) {
+) : Evaluation(rulesService) {
     override fun runQueries(commit: Commit) =
         commit.files
             .map { currentFile ->
@@ -18,16 +19,19 @@ class SourceCodeNavigationEvaluation(
                 val intersectionSize = actual
                     .intersect(expected)
                     .size
-                    .toDouble()
 
-                val expectedSize = expected.size
-                val actualSize = actual.size
+                val actualFraction = actual.calculateFraction(intersectionSize)
+                val expectedFraction = expected.calculateFraction(intersectionSize)
 
                 Result(
-                    precision = if (actualSize != 0) intersectionSize / actualSize else 1.0,
-                    fairPrecision = if (actualSize != 0) intersectionSize / actualSize else NaN,
-                    recall = if (expectedSize != 0) intersectionSize / expectedSize else 1.0,
-                    fairRecall = if (expectedSize != 0) intersectionSize / expectedSize else NaN
+                    precision = actualFraction ?: 1.0,
+                    fairPrecision = actualFraction ?: NaN,
+                    recall = expectedFraction ?: 1.0,
+                    fairRecall = expectedFraction ?: NaN
                 )
             }
 }
+
+private fun List<String>.calculateFraction(intersectionSize: Int) =
+    takeIf(List<String>::isNotEmpty)
+        ?.run { intersectionSize.toDouble() / size }
