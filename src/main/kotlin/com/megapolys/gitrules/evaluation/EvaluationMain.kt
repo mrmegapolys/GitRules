@@ -1,6 +1,6 @@
 package com.megapolys.gitrules.evaluation
 
-import com.megapolys.gitrules.evaluation.strategies.ErrorPreventionEvaluation
+import com.megapolys.gitrules.evaluation.strategies.FalseAlarmEvaluation
 import com.megapolys.gitrules.miner.DataSource
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.server.RulesService
@@ -16,7 +16,7 @@ fun main() {
         .runWithStatistics(train)
     val rulesService = RulesService(itemsets.levels)
 
-    val experiment = Experiment(ErrorPreventionEvaluation(rulesService, minConfidence = 0.95))
+    val experiment = Experiment(FalseAlarmEvaluation(rulesService, minConfidence = 0.95))
     println(experiment.run(test, chunkSize = 5))
 }
 

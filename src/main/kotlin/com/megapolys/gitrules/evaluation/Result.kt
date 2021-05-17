@@ -5,8 +5,8 @@ import kotlin.reflect.KProperty1
 
 data class Result(
     val precision: Double,
-    val fairPrecision: Double,
-    val recall: Double,
+    val fairPrecision: Double = NaN,
+    val recall: Double = NaN,
     val fairRecall: Double = NaN,
     val correctFirst: Double = NaN,
     val fairCorrectFirst: Double = NaN,
