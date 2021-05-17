@@ -12,6 +12,7 @@ class RulesController(
     @GetMapping("/rules")
     fun getRules(
         @RequestBody files: Collection<String>,
-        @RequestParam size: Int
-    ) = rulesService.generateRules(files, size)
+        @RequestParam size: Int,
+        @RequestParam(defaultValue = "0") minConfidence: Double
+    ) = rulesService.generateRules(files, size, minConfidence)
 }

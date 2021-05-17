@@ -1,18 +1,19 @@
 package com.megapolys.gitrules.evaluation
 
+import kotlin.Double.Companion.NaN
 import kotlin.reflect.KProperty1
 
 data class Result(
     val precision: Double,
     val fairPrecision: Double,
     val recall: Double,
-    val fairRecall: Double,
-    val correctFirst: Double,
-    val fairCorrectFirst: Double,
-    val correctInTop: Double,
-    val fairCorrectInTop: Double,
-    val correctAll: Double,
-    val fairCorrectAll: Double
+    val fairRecall: Double = NaN,
+    val correctFirst: Double = NaN,
+    val fairCorrectFirst: Double = NaN,
+    val correctInTop: Double = NaN,
+    val fairCorrectInTop: Double = NaN,
+    val correctAll: Double = NaN,
+    val fairCorrectAll: Double = NaN
 )
 
 fun List<Result>.aggregate() =

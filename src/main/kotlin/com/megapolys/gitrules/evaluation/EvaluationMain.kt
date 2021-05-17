@@ -1,6 +1,6 @@
 package com.megapolys.gitrules.evaluation
 
-import com.megapolys.gitrules.evaluation.strategies.SourceCodeNavigationEvaluation
+import com.megapolys.gitrules.evaluation.strategies.ErrorPreventionEvaluation
 import com.megapolys.gitrules.miner.DataSource
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.server.RulesService
@@ -16,7 +16,7 @@ fun main() {
         .runWithStatistics(train)
     val rulesService = RulesService(itemsets.levels)
 
-    val experiment = Experiment(SourceCodeNavigationEvaluation(rulesService))
-    println(experiment.run(test, chunkSize = 25))
+    val experiment = Experiment(ErrorPreventionEvaluation(rulesService, minConfidence = 0.95))
+    println(experiment.run(test, chunkSize = 5))
 }
 
