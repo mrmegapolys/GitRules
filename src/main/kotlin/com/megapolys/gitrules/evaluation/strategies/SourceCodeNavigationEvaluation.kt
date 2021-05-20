@@ -23,21 +23,12 @@ class SourceCodeNavigationEvaluation(
                 val actualFraction = actual.calculateFraction(intersectionSize)
                 val expectedFraction = expected.calculateFraction(intersectionSize)
 
-                val hasCorrectInFirst = hasIntersection(actual.take(1), expected)
-                val hasCorrectInTop = hasIntersection(actual.take(3), expected)
-                val hasCorrectInAll = hasIntersection(actual, expected)
-
                 Result(
                     precision = actualFraction ?: 1.0,
                     fairPrecision = actualFraction ?: NaN,
                     recall = expectedFraction ?: 1.0,
                     fairRecall = expectedFraction ?: NaN,
-                    correctFirst = hasCorrectInFirst ?: 1.0,
-                    fairCorrectFirst = hasCorrectInFirst ?: NaN,
-                    correctInTop = hasCorrectInTop ?: 1.0,
-                    fairCorrectInTop = hasCorrectInTop ?: NaN,
-                    correctAll = hasCorrectInAll ?: 1.0,
-                    fairCorrectAll = hasCorrectInAll ?: NaN
+                    fairCorrectInTop = hasIntersection(actual.take(3), expected) ?: NaN
                 )
             }
 }
