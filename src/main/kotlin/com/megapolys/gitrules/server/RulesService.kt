@@ -1,36 +1,17 @@
 package com.megapolys.gitrules.server
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance
 import com.megapolys.gitrules.model.Itemset
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service
-class RulesService(
-    objectMapper: ObjectMapper,
-    @Value("\${itemsets.filename}")
-    private val filename: String
-) {
-    private val javaType = defaultInstance().run {
-        constructCollectionType(
-            List::class.java,
-            constructCollectionType(
-                List::class.java,
-                Itemset::class.java
-            )
-        )
-    }
-    private val itemsets = objectMapper
-        .readValue<List<List<Itemset>>>(File(filename), javaType)
-
-    fun generateRules(files: Collection<String>, size: Int) =
+class RulesService(private val itemsets: List<List<Itemset>>) {
+    fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
         itemsets
             .drop(2)
             .flatten()
             .filter { it.items.any(files::contains) }
             .flatMap { generateRulesFromItemset(it, files) }
+            .filter { it.confidence >= minConfidence }
             .sortedWith(
                 compareByDescending(Rule::confidence)
                     .thenByDescending(Rule::support)
