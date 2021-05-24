@@ -2,6 +2,9 @@ package com.megapolys.gitrules.miner
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
+import com.megapolys.gitrules.miner.fpGrowth.Itemsets
+import com.megapolys.gitrules.model.CompressedItemset
+import com.megapolys.gitrules.model.Itemset
 import java.io.File
 
 private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_hash.txt"
@@ -13,15 +16,40 @@ fun main() {
     val itemsets = FpGrowth(MIN_SUPPORT)
         .runWithStatistics(commits)
 
-    jacksonObjectMapper()
-        .writerWithDefaultPrettyPrinter()
-        .writeValue(File(generateOutputFilename()), itemsets.levels)
+    val compressMap = buildCompressMap(itemsets)
+    val compressedItemsets = itemsets.compress(compressMap)
+
+    jacksonObjectMapper().run {
+        writeValue(File(generateOutputFilename("map")), compressMap.inverse())
+        writeValue(File(generateOutputFilename("itemsets")), compressedItemsets)
+    }
 }
 
-private fun generateOutputFilename() =
+private fun buildCompressMap(itemsets: Itemsets) =
+    itemsets.levels
+        .flatten()
+        .flatMap(Itemset::items)
+        .distinct()
+        .mapIndexed { index, item -> item to index }
+        .toMap()
+
+private fun Itemsets.compress(compressMap: Map<String, Int>) =
+    levels.map { level ->
+        level.map { itemset ->
+            CompressedItemset(
+                items = itemset.items.map { compressMap[it]!! },
+                support = itemset.support
+            )
+        }
+    }
+
+private fun <K, V> Map<K, V>.inverse() =
+    map { (key, value) -> value to key }.toMap()
+
+private fun generateOutputFilename(type: String) =
     INPUT_FILENAME
         .substringAfterLast("/")
         .substringBefore(".") +
-            "_pretty" +
             "_$MIN_SUPPORT" +
+            "_$type" +
             ".json"
