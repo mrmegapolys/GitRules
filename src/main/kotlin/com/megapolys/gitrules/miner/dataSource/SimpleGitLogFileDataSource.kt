@@ -8,10 +8,6 @@ class SimpleGitLogFileDataSource(
 ) : DataSource {
     override fun getCommits() =
         File(fileName)
-            .readText()
-            .split("\n\n")
-            .filter(String::isNotBlank)
-            .map(String::trim)
-            .map { it.split("\n") }
+            .readCommitLines()
             .map(::Commit)
 }
