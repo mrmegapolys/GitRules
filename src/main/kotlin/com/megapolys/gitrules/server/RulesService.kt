@@ -4,11 +4,16 @@ import com.megapolys.gitrules.model.Itemset
 import org.springframework.stereotype.Service
 
 @Service
-class RulesService(private val itemsets: List<List<Itemset>>) {
+class RulesService(itemsets: List<List<Itemset>>) {
     private val preparedItemsets =
         itemsets
             .drop(2)
             .flatten()
+
+    private val supportMap =
+        itemsets
+            .flatten()
+            .associate { it.items to it.support }
 
     fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
         preparedItemsets
@@ -30,16 +35,11 @@ class RulesService(private val itemsets: List<List<Itemset>>) {
         .mapNotNull { currentFile ->
             val fromSet = itemset.items.filter { it != currentFile }
             if (changedFiles.containsAll(fromSet) && !changedFiles.contains(currentFile)) {
-                val fromSetSupport =
-                    itemsets[fromSet.size]
-                        .find { it.items == fromSet }!!
-                        .support
-
                 Rule(
                     fromSet = fromSet,
                     toSet = currentFile,
                     support = itemset.support,
-                    confidence = itemset.support.toDouble() / fromSetSupport
+                    confidence = itemset.support.toDouble() / supportMap[fromSet]!!
                 )
             } else null
         }
