@@ -1,17 +1,18 @@
 package com.megapolys.gitrules.miner
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.megapolys.gitrules.miner.dataSource.SimpleGitLogFileDataSource
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.miner.fpGrowth.Itemsets
 import com.megapolys.gitrules.model.CompressedItemset
 import com.megapolys.gitrules.model.Itemset
 import java.io.File
 
-private const val INPUT_FILENAME = "/Users/u18398407/Diploma/commits/th_full_hash.txt"
+private const val INPUT_FILENAME = "input/th_full.txt"
 private const val MIN_SUPPORT = 8
 
 fun main() {
-    val commits = DataSource(INPUT_FILENAME)
+    val commits = SimpleGitLogFileDataSource(INPUT_FILENAME)
         .getCommits()
     val itemsets = FpGrowth(MIN_SUPPORT)
         .runWithStatistics(commits)
