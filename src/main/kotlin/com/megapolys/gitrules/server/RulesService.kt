@@ -12,6 +12,7 @@ class RulesService(private val itemsets: List<List<Itemset>>) {
 
     fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
         preparedItemsets
+            .filter { files.size >= it.items.size - 1 }
             .filter { it.items.any(files::contains) }
             .flatMap { generateRulesFromItemset(it, files) }
             .filter { it.confidence >= minConfidence }
