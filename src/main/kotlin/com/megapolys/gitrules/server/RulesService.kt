@@ -11,9 +11,9 @@ class RulesService(itemsets: List<List<Itemset>>) {
             .flatten()
 
     private val supportMap =
-        itemsets
-            .flatten()
-            .associate { it.items to it.support }
+        itemsets.map { level ->
+            level.associate { it.items to it.support }
+        }
 
     fun generateRules(files: Set<String>, size: Int, minConfidence: Double) =
         preparedItemsets
@@ -39,7 +39,7 @@ class RulesService(itemsets: List<List<Itemset>>) {
                     fromSet = fromSet,
                     toSet = currentFile,
                     support = itemset.support,
-                    confidence = itemset.support.toDouble() / supportMap[fromSet]!!
+                    confidence = itemset.support.toDouble() / supportMap[fromSet.size][fromSet]!!
                 )
             } else null
         }
