@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class RulesService(private val itemsets: List<List<Itemset>>) {
-    fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
+    private val preparedItemsets =
         itemsets
             .drop(2)
             .flatten()
+
+    fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
+        preparedItemsets
             .filter { it.items.any(files::contains) }
             .flatMap { generateRulesFromItemset(it, files) }
             .filter { it.confidence >= minConfidence }
