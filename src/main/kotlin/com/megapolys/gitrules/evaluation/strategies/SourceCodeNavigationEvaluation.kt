@@ -14,7 +14,7 @@ class SourceCodeNavigationEvaluation(
             .map { currentFile ->
                 val expected = commit.files - currentFile
                 val actual = rulesService
-                    .generateRules(listOf(currentFile), 7, 0.0)
+                    .generateRules(setOf(currentFile), 7, 0.0)
                     .map(Rule::toSet)
                 val intersectionSize = actual
                     .intersect(expected)

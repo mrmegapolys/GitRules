@@ -14,5 +14,5 @@ class RulesController(
         @RequestBody files: Collection<String>,
         @RequestParam size: Int,
         @RequestParam(defaultValue = "0") minConfidence: Double
-    ) = rulesService.generateRules(files, size, minConfidence)
+    ) = rulesService.generateRules(files.toSet(), size, minConfidence)
 }
