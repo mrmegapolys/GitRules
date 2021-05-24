@@ -20,12 +20,7 @@ class RulesService(itemsets: List<List<Itemset>>) {
             .filter { files.size >= it.items.size - 1 }
             .generateRules(files)
             .filter { it.confidence >= minConfidence }
-            .sortedWith(
-                compareByDescending(Rule::confidence)
-                    .thenByDescending(Rule::support)
-            )
-            .distinctBy { it.toSet }
-            .take(size)
+            .takeTopUnique(size)
 
     private fun List<Itemset>.generateRules(changedFiles: Set<String>) =
         mapNotNull { itemset ->
@@ -33,13 +28,25 @@ class RulesService(itemsets: List<List<Itemset>>) {
                 null -> null
                 else -> {
                     val fromSet = itemset.items - toSet
+                    val i = supportMap[fromSet.size][fromSet]
+                    if (i == null) {
+                        println(itemset)
+                    }
                     Rule(
                         fromSet = fromSet,
                         toSet = toSet,
                         support = itemset.support,
-                        confidence = itemset.support.toDouble() / supportMap[fromSet.size][fromSet]!!
+                        confidence = itemset.support.toDouble() / i!!
                     )
                 }
             }
         }
 }
+
+private fun List<Rule>.takeTopUnique(size: Int) =
+    sortedWith(
+        compareByDescending(Rule::confidence)
+            .thenByDescending(Rule::support)
+    )
+        .distinctBy { it.toSet }
+        .take(size)

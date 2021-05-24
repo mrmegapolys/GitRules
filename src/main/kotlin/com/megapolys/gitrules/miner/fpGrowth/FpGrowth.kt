@@ -6,10 +6,14 @@ import java.lang.System.currentTimeMillis
 import kotlin.math.min
 
 private const val MAX_PATTERN_LENGTH = 1000
+private const val MAX_ITEMSET_LENGTH = 8
 private const val BUFFERS_SIZE = 2000
 
 class FpGrowth(private val minSupport: Int) {
     private val itemsets = Itemsets()
+
+    private var skippedItemsetsCount = 0
+    private var itemsetsCount = 0
 
     private val itemsetBuffer = arrayOfNulls<String>(BUFFERS_SIZE)
     private val fpNodeTempBuffer = arrayOfNulls<FpNode>(BUFFERS_SIZE)
@@ -31,6 +35,7 @@ class FpGrowth(private val minSupport: Int) {
             ================  MINER STATISTICS ================
             Transactions count: ${commits.size}
             Frequent itemsets count: ${itemsets.count}
+            Skipped itemsets count: $skippedItemsetsCount
             Max memory usage: ${MemoryLogger.maxMemory} mb 
             Total time: ${endTimestamp - startTimestamp} ms
             ===================================================
@@ -169,6 +174,13 @@ class FpGrowth(private val minSupport: Int) {
     }
 
     private fun saveItemset(filesArray: Array<String?>, itemsetLength: Int, support: Int) {
+        if (itemsetLength > MAX_ITEMSET_LENGTH) {
+            skippedItemsetsCount++
+            return
+        }
+        itemsetsCount++
+        if (itemsetsCount % 1_000_000 == 0) println(itemsetsCount)
+
         val files = filesArray
             .copyOfRange(0, itemsetLength)
             .map { it as String }
