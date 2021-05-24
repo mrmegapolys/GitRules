@@ -18,8 +18,7 @@ class RulesService(itemsets: List<List<Itemset>>) {
     fun generateRules(files: Set<String>, size: Int, minConfidence: Double) =
         preparedItemsets
             .filter { files.size >= it.items.size - 1 }
-            .filter { it.items.any(files::contains) }
-            .flatMap { generateRulesFromItemset(it, files) }
+            .generateRules(files)
             .filter { it.confidence >= minConfidence }
             .sortedWith(
                 compareByDescending(Rule::confidence)
@@ -28,19 +27,19 @@ class RulesService(itemsets: List<List<Itemset>>) {
             .distinctBy { it.toSet }
             .take(size)
 
-    private fun generateRulesFromItemset(
-        itemset: Itemset,
-        changedFiles: Set<String>
-    ) = itemset.items
-        .mapNotNull { currentFile ->
-            val fromSet = itemset.items.filter { it != currentFile }
-            if (changedFiles.containsAll(fromSet) && !changedFiles.contains(currentFile)) {
-                Rule(
-                    fromSet = fromSet,
-                    toSet = currentFile,
-                    support = itemset.support,
-                    confidence = itemset.support.toDouble() / supportMap[fromSet.size][fromSet]!!
-                )
-            } else null
+    private fun List<Itemset>.generateRules(changedFiles: Set<String>) =
+        mapNotNull { itemset ->
+            when (val toSet = itemset.items.singleOrNull { !changedFiles.contains(it) }) {
+                null -> null
+                else -> {
+                    val fromSet = itemset.items - toSet
+                    Rule(
+                        fromSet = fromSet,
+                        toSet = toSet,
+                        support = itemset.support,
+                        confidence = itemset.support.toDouble() / supportMap[fromSet.size][fromSet]!!
+                    )
+                }
+            }
         }
 }
