@@ -15,7 +15,7 @@ class RulesService(itemsets: List<List<Itemset>>) {
             .flatten()
             .associate { it.items to it.support }
 
-    fun generateRules(files: Collection<String>, size: Int, minConfidence: Double) =
+    fun generateRules(files: Set<String>, size: Int, minConfidence: Double) =
         preparedItemsets
             .filter { files.size >= it.items.size - 1 }
             .filter { it.items.any(files::contains) }
@@ -30,7 +30,7 @@ class RulesService(itemsets: List<List<Itemset>>) {
 
     private fun generateRulesFromItemset(
         itemset: Itemset,
-        changedFiles: Collection<String>
+        changedFiles: Set<String>
     ) = itemset.items
         .mapNotNull { currentFile ->
             val fromSet = itemset.items.filter { it != currentFile }

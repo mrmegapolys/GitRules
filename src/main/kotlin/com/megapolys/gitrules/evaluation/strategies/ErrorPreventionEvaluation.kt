@@ -15,7 +15,7 @@ class ErrorPreventionEvaluation(
             .map { currentFile ->
                 val changedFiles = commit.files - currentFile
                 val actual = rulesService
-                    .generateRules(changedFiles, 7, minConfidence)
+                    .generateRules(changedFiles.toSet(), 7, minConfidence)
                     .map(Rule::toSet)
 
                 val containsExpected = if (actual.contains(currentFile)) 1.0 else 0.0
