@@ -2,21 +2,18 @@ package com.megapolys.gitrules.evaluation.strategies
 
 import com.megapolys.gitrules.evaluation.Result
 import com.megapolys.gitrules.miner.Commit
-import com.megapolys.gitrules.server.Rule
 import com.megapolys.gitrules.server.RulesService
 import kotlin.Double.Companion.NaN
 
 class ErrorPreventionEvaluation(
     rulesService: RulesService,
-    private val minConfidence: Double
-) : Evaluation(rulesService) {
+    minConfidence: Double
+) : Evaluation(rulesService, minConfidence) {
     override fun runQueries(commit: Commit) =
         commit.files
             .map { currentFile ->
                 val changedFiles = commit.files - currentFile
-                val actual = rulesService
-                    .generateRules(changedFiles.toSet(), 7, minConfidence)
-                    .map(Rule::toSet)
+                val actual = getRules(changedFiles)
 
                 val containsExpected = if (actual.contains(currentFile)) 1.0 else 0.0
                 Result(

@@ -6,14 +6,12 @@ import com.megapolys.gitrules.server.RulesService
 
 class FalseAlarmEvaluation(
     rulesService: RulesService,
-    private val minConfidence: Double
-) : Evaluation(rulesService) {
+    minConfidence: Double
+) : Evaluation(rulesService, minConfidence) {
     override fun runQueries(commit: Commit) =
-        rulesService.generateRules(commit.files.toSet(), 7, minConfidence).run {
-            listOf(
-                Result(
-                    precision = if (isEmpty()) 1.0 else 0.0
-                )
+        listOf(
+            Result(
+                precision = if (getRules(commit.files).isEmpty()) 1.0 else 0.0
             )
-        }
+        )
 }
