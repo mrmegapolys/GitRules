@@ -2,20 +2,18 @@ package com.megapolys.gitrules.evaluation.strategies
 
 import com.megapolys.gitrules.evaluation.Result
 import com.megapolys.gitrules.miner.Commit
-import com.megapolys.gitrules.server.Rule
 import com.megapolys.gitrules.server.RulesService
 import kotlin.Double.Companion.NaN
 
 class SourceCodeNavigationEvaluation(
-    rulesService: RulesService
-) : Evaluation(rulesService) {
+    rulesService: RulesService,
+    minConfidence: Double
+) : Evaluation(rulesService, minConfidence) {
     override fun runQueries(commit: Commit) =
         commit.files
             .map { currentFile ->
                 val expected = commit.files - currentFile
-                val actual = rulesService
-                    .generateRules(setOf(currentFile), 7, 0.0)
-                    .map(Rule::toSet)
+                val actual = getRules(setOf(currentFile))
                 val intersectionSize = actual
                     .intersect(expected)
                     .size
