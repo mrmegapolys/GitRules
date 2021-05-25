@@ -5,7 +5,7 @@ import com.megapolys.gitrules.model.Itemset
 import java.lang.System.currentTimeMillis
 import kotlin.math.min
 
-private const val MAX_PATTERN_LENGTH = 1000
+private const val MAX_PATTERN_LENGTH = 5
 private const val BUFFERS_SIZE = 2000
 
 class FpGrowth(private val minSupport: Int) {
@@ -75,7 +75,7 @@ class FpGrowth(private val minSupport: Int) {
         prefixSupport: Int,
         supportMap: Map<String, Int>
     ) {
-        if (prefixLength == MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
+        if (prefixLength == MAX_PATTERN_LENGTH) return
 
         val singlePathLength = calculateSinglePathLength(tree)
         if (singlePathLength > 0) {
@@ -90,7 +90,7 @@ class FpGrowth(private val minSupport: Int) {
             val betaSupport = min(prefixSupport, itemSupport)
             saveItemset(prefix, prefixLength + 1, betaSupport)
 
-            if (prefixLength + 1 >= MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
+            if (prefixLength + 1 >= MAX_PATTERN_LENGTH) continue
 
             val prefixPaths = mutableListOf<List<FpNode>>()
             var path = tree.mapItemFirstNode[item]
@@ -152,12 +152,12 @@ class FpGrowth(private val minSupport: Int) {
     ) {
         var support = 0
 
-        for (i in 1 until (1L shl position)) {
+        loop@ for (i in 1 until (1L shl position)) {
             var newPrefixLength = prefixLength
 
             for (j in 0 until position) {
+                if (newPrefixLength == MAX_PATTERN_LENGTH) continue@loop
                 if (i and (1L shl j) <= 0) continue
-                if (newPrefixLength == MAX_PATTERN_LENGTH) maxPatternLengthExceeded()
 
                 with(checkNotNull(fpNodeTempBuffer[j])) {
                     prefix[newPrefixLength++] = itemName
@@ -179,8 +179,4 @@ class FpGrowth(private val minSupport: Int) {
             level = itemsetLength
         )
     }
-}
-
-fun maxPatternLengthExceeded(): Nothing {
-    throw Exception("Exceeded max pattern length: $MAX_PATTERN_LENGTH")
 }
