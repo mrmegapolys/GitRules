@@ -20,7 +20,7 @@ fun main() {
 
 
     val navigationExperiment = Experiment(
-        SourceCodeNavigationEvaluation(rulesService)
+        SourceCodeNavigationEvaluation(rulesService, minConfidence = 0.0)
     )
     val preventionExperiment = Experiment(
         ErrorPreventionEvaluation(rulesService, minConfidence = 0.9)
