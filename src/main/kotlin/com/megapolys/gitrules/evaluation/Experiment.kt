@@ -33,7 +33,7 @@ class Experiment(private val evaluation: Evaluation) {
         }
 }
 
-private fun withTimer(function: () -> Any) =
+private fun <T> withTimer(function: () -> T) =
     currentTimeMillis().let { startTime ->
         function().apply {
             println("Calculated in ${(currentTimeMillis() - startTime) / 1000}s")

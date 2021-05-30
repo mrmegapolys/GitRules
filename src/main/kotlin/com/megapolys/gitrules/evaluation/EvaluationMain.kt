@@ -1,47 +1,52 @@
 package com.megapolys.gitrules.evaluation
 
-import com.megapolys.gitrules.evaluation.strategies.ErrorPreventionEvaluation
-import com.megapolys.gitrules.evaluation.strategies.FalseAlarmEvaluation
-import com.megapolys.gitrules.evaluation.strategies.SourceCodeNavigationEvaluation
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.megapolys.gitrules.miner.dataSource.SimpleGitLogFileDataSource
-import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
-import com.megapolys.gitrules.server.RulesService
+import java.io.File
+import java.time.Duration.ofSeconds
 
-private const val INPUT_FILENAME = "input/th_full.txt"
-private const val MIN_SUPPORT = 8
+private val projects = listOf(
+    "guava",
+    "jackson",
+    "junit4",
+    "lombok",
+    "mockito",
+    "netty",
+    "tradehub"
+)
+
+private val supports = 18 downTo 2
 
 fun main() {
-    val commits = SimpleGitLogFileDataSource(INPUT_FILENAME).getCommits()
-    val (train, test) = commits.run { dropLast(1000) to takeLast(1000) }
+    val objectWriter = jacksonObjectMapper()
+        .writerWithDefaultPrettyPrinter()
 
-    val itemsets = FpGrowth(MIN_SUPPORT)
-        .runWithStatistics(train)
-    val rulesService = RulesService(itemsets.levels)
+    projects.forEach { project ->
+        println("Starting $project evaluation")
+        val commits = SimpleGitLogFileDataSource("input/$project.txt")
+            .getCommits()
+        val testSize = commits.size / 10
+        println("Test size: $testSize")
 
+        val (train, test) = commits.run { dropLast(testSize) to takeLast(testSize) }
 
-    val navigationExperiment = Experiment(
-        SourceCodeNavigationEvaluation(rulesService, minConfidence = 0.0)
-    )
-    val preventionExperiment = Experiment(
-        ErrorPreventionEvaluation(rulesService, minConfidence = 0.9)
-    )
-    val falseAlarmExperiment = Experiment(
-        FalseAlarmEvaluation(rulesService, minConfidence = 0.9)
-    )
+        val results = supports.mapNotNull { support ->
+            println("Starting evaluation with minSupport $support")
+            ExperimentRunner().run(
+                trainCommits = train,
+                testCommits = test,
+                minSupport = support,
+                miningTimeout = ofSeconds(30)
+            )?.let { support to it }
+        }
+            .toMap()
+            .let {
+                mutableMapOf<Any, Any>(
+                    "commitsSize" to commits.size,
+                    "testSize" to testSize,
+                ).putAll(it)
+            }
 
-    println("Starting source code navigation evaluation")
-    val navigationResult = navigationExperiment.run(test, chunkSize = 25)
-    println("Source code navigation evaluation:")
-    println(navigationResult)
-
-    println("Starting error prevention evaluation")
-    val preventionResult = preventionExperiment.run(test, chunkSize = 3)
-    println("Error prevention evaluation:")
-    println(preventionResult)
-
-    println("Starting false alarm evaluation")
-    val falseAlarmResult = falseAlarmExperiment.run(test, chunkSize = 5)
-    println("False alarm evaluation:")
-    println(falseAlarmResult)
+        objectWriter.writeValue(File("results/gen1/$project.json"), results)
+    }
 }
-
