@@ -30,23 +30,20 @@ fun main() {
 
         val (train, test) = commits.run { dropLast(testSize) to takeLast(testSize) }
 
-        val results = supports.mapNotNull { support ->
+        val results = mutableMapOf<Int, Map<String, Result>>()
+        for (support in supports) {
             println("Starting evaluation with minSupport $support")
             ExperimentRunner().run(
                 trainCommits = train,
                 testCommits = test,
                 minSupport = support,
                 miningTimeout = ofSeconds(30)
-            )?.let { support to it }
+            )?.let { results.put(support, it) } ?: break
         }
-            .toMap()
-            .let {
-                mutableMapOf<Any, Any>(
-                    "commitsSize" to commits.size,
-                    "testSize" to testSize,
-                ).putAll(it)
-            }
 
-        objectWriter.writeValue(File("results/gen1/$project.json"), results)
+        objectWriter.writeValue(
+            File("results/gen1_simple/$project.json"),
+            results + ("commitsSize" to commits.size)
+        )
     }
 }
