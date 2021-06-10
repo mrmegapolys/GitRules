@@ -38,7 +38,7 @@ fun main() {
                 testCommits = test,
                 minSupport = support,
                 miningTimeout = ofSeconds(30)
-            )?.let { results.put(support, it) } ?: break
+            )?.apply { results[support] = this } ?: break
         }
 
         objectWriter.writeValue(
