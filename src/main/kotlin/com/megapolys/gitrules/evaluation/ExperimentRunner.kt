@@ -31,6 +31,7 @@ class ExperimentRunner {
         try {
             future.get(miningTimeout.toSeconds(), SECONDS)
         } catch (e: TimeoutException) {
+            executor.shutdownNow()
             println("Mining timed out, skipping...")
             return null
         }

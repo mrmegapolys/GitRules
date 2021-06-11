@@ -3,6 +3,7 @@ package com.megapolys.gitrules.miner.fpGrowth
 import com.megapolys.gitrules.miner.Commit
 import com.megapolys.gitrules.model.Itemset
 import java.lang.System.currentTimeMillis
+import java.lang.Thread.currentThread
 import kotlin.math.min
 
 private const val MAX_PATTERN_LENGTH = 1000
@@ -169,6 +170,8 @@ class FpGrowth(private val minSupport: Int) {
     }
 
     private fun saveItemset(filesArray: Array<String?>, itemsetLength: Int, support: Int) {
+        if (currentThread().isInterrupted) throw InterruptedException()
+
         val files = filesArray
             .copyOfRange(0, itemsetLength)
             .map { it as String }
