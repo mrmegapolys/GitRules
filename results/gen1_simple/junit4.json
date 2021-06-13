@@ -321,5 +321,28 @@
       "fairCorrectInTop" : "NaN"
     }
   },
+  "4" : {
+    "navigation" : {
+      "precision" : 0.9662417970721857,
+      "fairPrecision" : 0.16925465838509318,
+      "recall" : 0.06811628756920388,
+      "fairRecall" : 0.0010488991745632333,
+      "fairCorrectInTop" : 0.2318840579710145
+    },
+    "prevention" : {
+      "precision" : 0.9004711425206124,
+      "fairPrecision" : 0.0,
+      "recall" : 0.0,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.9951923076923077,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    }
+  },
   "commitsSize" : 2082
 }
