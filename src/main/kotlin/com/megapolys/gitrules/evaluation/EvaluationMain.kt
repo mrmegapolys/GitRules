@@ -42,7 +42,7 @@ fun main() {
         }
 
         objectWriter.writeValue(
-            File("results/gen2_50_95/$project.json"),
+            File("results/gen3_max8/$project.json"),
             results + ("commitsSize" to commits.size)
         )
     }
