@@ -6,7 +6,7 @@ import java.lang.System.currentTimeMillis
 import java.lang.Thread.currentThread
 import kotlin.math.min
 
-private const val MAX_PATTERN_LENGTH = 8
+private const val MAX_PATTERN_LENGTH = 5
 private const val BUFFERS_SIZE = 2000
 
 class FpGrowth(private val minSupport: Int) {
