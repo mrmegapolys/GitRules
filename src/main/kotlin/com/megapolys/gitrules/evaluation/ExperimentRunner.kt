@@ -7,6 +7,7 @@ import com.megapolys.gitrules.miner.Commit
 import com.megapolys.gitrules.miner.fpGrowth.FpGrowth
 import com.megapolys.gitrules.miner.fpGrowth.Itemsets
 import com.megapolys.gitrules.server.RulesService
+import java.lang.System.currentTimeMillis
 import java.time.Duration
 import java.util.concurrent.Executors.newSingleThreadExecutor
 import java.util.concurrent.TimeUnit.SECONDS
@@ -18,7 +19,7 @@ class ExperimentRunner {
         testCommits: List<Commit>,
         minSupport: Int,
         miningTimeout: Duration
-    ): Map<String, Result>? {
+    ): Map<String, Any>? {
         val executor = newSingleThreadExecutor()
 
         var itemsets: Itemsets? = null
@@ -28,11 +29,18 @@ class ExperimentRunner {
         }, itemsets)
         executor.shutdown()
 
+        val startTime = currentTimeMillis()
         try {
             future.get(miningTimeout.toSeconds(), SECONDS)
         } catch (e: TimeoutException) {
             executor.shutdownNow()
             println("Mining timed out, skipping...")
+            return null
+        }
+        val miningTime = currentTimeMillis() - startTime
+
+        if (itemsets!!.count > 50_000_000) {
+            println("Too much itemsets, skipping...")
             return null
         }
 
@@ -56,7 +64,8 @@ class ExperimentRunner {
         return mapOf(
             "navigation" to navigationResult,
             "prevention" to preventionResult,
-            "falseAlarm" to falseAlarmResult
+            "falseAlarm" to falseAlarmResult,
+            "miningTime" to miningTime
         )
     }
 }
