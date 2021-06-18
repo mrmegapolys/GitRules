@@ -287,5 +287,29 @@
     },
     "miningTime" : 4306
   },
+  "6" : {
+    "navigation" : {
+      "precision" : 0.9098037630060916,
+      "fairPrecision" : 0.6236954565901935,
+      "recall" : 0.05530674835065028,
+      "fairRecall" : 0.02274746947499938,
+      "fairCorrectInTop" : 0.7638326585695007
+    },
+    "prevention" : {
+      "precision" : 0.6914789399505553,
+      "fairPrecision" : 0.06810663689022266,
+      "recall" : 0.07472100921882581,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.8862815884476535,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 16575
+  },
   "commitsSize" : 5543
 }
