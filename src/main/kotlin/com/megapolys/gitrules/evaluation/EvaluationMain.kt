@@ -11,11 +11,11 @@ private val projects = listOf(
 //    "junit4",
 //    "lombok",
 //    "mockito",
-    "netty",
-//    "tradehub"
+//    "netty",
+    "tradehub"
 )
 
-private val supports = 6 downTo 1
+private val supports = 18 downTo 1
 
 fun main() {
     val objectWriter = jacksonObjectMapper()
@@ -33,19 +33,20 @@ fun main() {
 
         val (train, test) = commits.run { dropLast(testSize) to takeLast(testSize) }
 
+        val results = mutableMapOf<Int, Map<String, Any>>()
         for (support in supports) {
             println("Starting $project evaluation with minSupport $support")
             ExperimentRunner().run(
                 trainCommits = train,
                 testCommits = test,
                 minSupport = support,
-                miningTimeout = ofMinutes(30)
-            )?.apply {
-                objectWriter.writeValue(
-                    File("$resultFolder/${project}_$support.json"),
-                    this
-                )
-            } ?: break
+                miningTimeout = ofMinutes(2)
+            )?.apply { results[support] = this } ?: break
         }
+
+        objectWriter.writeValue(
+            File("$resultFolder/$project.json"),
+            results + ("commitsSize" to commits.size)
+        )
     }
 }
