@@ -39,11 +39,6 @@ class ExperimentRunner {
         }
         val miningTime = currentTimeMillis() - startTime
 
-        if (itemsets!!.count > 10_000_000) {
-            println("Too much itemsets, skipping...")
-            return null
-        }
-
         val rulesService = RulesService(itemsets!!.levels)
 
         println("Starting source code navigation evaluation")
