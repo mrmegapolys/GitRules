@@ -39,7 +39,7 @@ class ExperimentRunner {
         }
         val miningTime = currentTimeMillis() - startTime
 
-        if (itemsets!!.count > 50_000_000) {
+        if (itemsets!!.count > 10_000_000) {
             println("Too much itemsets, skipping...")
             return null
         }

@@ -9,7 +9,7 @@ import java.util.concurrent.Future
 class Experiment(private val evaluation: Evaluation) {
     fun run(testCommits: List<Commit>, chunkSize: Int) =
         withTimer {
-            with(newFixedThreadPool(8)) {
+            with(newFixedThreadPool(16)) {
                 try {
                     testCommits
                         .chunked(chunkSize)

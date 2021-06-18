@@ -3,7 +3,7 @@ package com.megapolys.gitrules.evaluation
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.megapolys.gitrules.miner.dataSource.SimpleGitLogFileDataSource
 import java.io.File
-import java.time.Duration.ofHours
+import java.time.Duration.ofSeconds
 
 private val projects = listOf(
     "guava",
@@ -12,7 +12,7 @@ private val projects = listOf(
     "lombok",
     "mockito",
     "netty",
-    "tradehub"
+//    "tradehub"
 )
 
 private val supports = 18 downTo 1
@@ -20,6 +20,9 @@ private val supports = 18 downTo 1
 fun main() {
     val objectWriter = jacksonObjectMapper()
         .writerWithDefaultPrettyPrinter()
+
+    val resultFolder = "results/gen5_max5_30s"
+    File(resultFolder).mkdirs()
 
     projects.forEach { project ->
         println("Starting $project evaluation")
@@ -37,12 +40,12 @@ fun main() {
                 trainCommits = train,
                 testCommits = test,
                 minSupport = support,
-                miningTimeout = ofHours(8)
+                miningTimeout = ofSeconds(30)
             )?.apply { results[support] = this } ?: break
         }
 
         objectWriter.writeValue(
-            File("results/gen4_max5_8h/$project.json"),
+            File("$resultFolder/$project.json"),
             results + ("commitsSize" to commits.size)
         )
     }
