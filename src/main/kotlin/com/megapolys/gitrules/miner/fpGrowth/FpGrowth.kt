@@ -1,5 +1,6 @@
 package com.megapolys.gitrules.miner.fpGrowth
 
+import com.google.common.collect.Sets.combinations
 import com.megapolys.gitrules.miner.Commit
 import com.megapolys.gitrules.model.Itemset
 import java.lang.System.currentTimeMillis
@@ -89,7 +90,7 @@ class FpGrowth(private val minSupport: Int) {
 
             prefix[prefixLength] = item
             val betaSupport = min(prefixSupport, itemSupport)
-            saveItemset(prefix, prefixLength + 1, betaSupport)
+            saveItemset(prefix.toListNotNull(prefixLength + 1), betaSupport)
 
             if (prefixLength + 1 >= MAX_PATTERN_LENGTH) continue
 
@@ -148,38 +149,29 @@ class FpGrowth(private val minSupport: Int) {
     private fun saveAllCombinationsOfPrefixPath(
         fpNodeTempBuffer: Array<FpNode?>,
         position: Int,
-        prefix: Array<String?>,
+        prefixArray: Array<String?>,
         prefixLength: Int
     ) {
-        var support = 0
+        val prefix = prefixArray.toListNotNull(prefixLength)
 
-        loop@ for (i in 1 until (1L shl position)) {
-            var newPrefixLength = prefixLength
+        val betaPath = fpNodeTempBuffer
+            .toListNotNull(position)
+            .toSet()
 
-            for (j in 0 until position) {
-                if (i and (1L shl j) <= 0) continue
-                if (newPrefixLength == MAX_PATTERN_LENGTH) continue@loop
-
-                with(checkNotNull(fpNodeTempBuffer[j])) {
-                    prefix[newPrefixLength++] = itemName
-                    support = counter
-                }
+        val maxPatternLength = min(position, MAX_PATTERN_LENGTH - prefixLength)
+        for (combinationLength in 1..maxPatternLength) {
+            combinations(betaPath, combinationLength).forEach { combination ->
+                val itemsetFiles = prefix + combination.map(FpNode::itemName)
+                saveItemset(itemsetFiles, combination.last().counter)
             }
-            saveItemset(prefix, newPrefixLength, support)
         }
     }
 
-    private fun saveItemset(filesArray: Array<String?>, itemsetLength: Int, support: Int) {
+    private fun saveItemset(files: List<String>, support: Int) {
         if (currentThread().isInterrupted) throw InterruptedException()
-
-        val files = filesArray
-            .copyOfRange(0, itemsetLength)
-            .map { it as String }
-            .sorted()
-
-        itemsets.addItemset(
-            itemset = Itemset(files, support),
-            level = itemsetLength
-        )
+        itemsets.addItemset(Itemset(files.sorted(), support))
     }
 }
+
+private fun <T> Array<T?>.toListNotNull(size: Int) =
+    copyOfRange(0, size).map { it!! }
