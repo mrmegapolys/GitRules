@@ -14,4 +14,5 @@ class SimpleGitLogFileDataSource(
             .map(String::trim)
             .map { it.split("\n") }
             .map(::Commit)
+            .reversed()
 }
