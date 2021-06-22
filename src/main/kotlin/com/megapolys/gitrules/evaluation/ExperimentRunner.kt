@@ -29,7 +29,7 @@ class ExperimentRunner {
         }, itemsets)
         executor.shutdown()
 
-        val startTime = currentTimeMillis()
+        val miningStartTime = currentTimeMillis()
         try {
             future.get(miningTimeout.toSeconds(), SECONDS)
         } catch (e: TimeoutException) {
@@ -37,10 +37,11 @@ class ExperimentRunner {
             println("Mining timed out, skipping...")
             return null
         }
-        val miningTime = currentTimeMillis() - startTime
+        val miningTime = currentTimeMillis() - miningStartTime
 
         val rulesService = RulesService(itemsets!!.levels)
 
+        val evaluationStartTime = currentTimeMillis()
         println("Starting source code navigation evaluation")
         val navigationResult = Experiment(
             SourceCodeNavigationEvaluation(rulesService, minConfidence = 0.5)
@@ -55,12 +56,15 @@ class ExperimentRunner {
         val falseAlarmResult = Experiment(
             FalseAlarmEvaluation(rulesService, minConfidence = 0.95)
         ).run(testCommits, chunkSize = 5)
+        val evaluationTime = currentTimeMillis() - evaluationStartTime
 
         return mapOf(
             "navigation" to navigationResult,
             "prevention" to preventionResult,
             "falseAlarm" to falseAlarmResult,
-            "miningTime" to miningTime
+            "miningTime" to miningTime,
+            "evaluationTime" to evaluationTime,
+            "itemsetsSize" to itemsets!!.count
         )
     }
 }
