@@ -21,7 +21,7 @@ fun main() {
     val objectWriter = jacksonObjectMapper()
         .writerWithDefaultPrettyPrinter()
 
-    val resultFolder = "results/gen6_max5_30s"
+    val resultFolder = "results/gen7_max5_30s"
     File(resultFolder).mkdirs()
 
     projects.forEach { project ->
