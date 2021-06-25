@@ -12,7 +12,7 @@ private val projects = listOf(
     "lombok",
     "mockito",
     "netty",
-    "tradehub"
+//    "tradehub"
 )
 
 private val supports = 18 downTo 1
@@ -21,7 +21,7 @@ fun main() {
     val objectWriter = jacksonObjectMapper()
         .writerWithDefaultPrettyPrinter()
 
-    val resultFolder = "results/gen7_max5_30s"
+    val resultFolder = "results/gen8_max5_30s"
     File(resultFolder).mkdirs()
 
     projects.forEach { project ->

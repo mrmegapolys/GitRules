@@ -44,18 +44,18 @@ class ExperimentRunner {
         val evaluationStartTime = currentTimeMillis()
         println("Starting source code navigation evaluation")
         val navigationResult = Experiment(
-            SourceCodeNavigationEvaluation(rulesService, minConfidence = 0.5)
-        ).run(testCommits.filter { it.files.size > 1 }, chunkSize = 25)
+            SourceCodeNavigationEvaluation(rulesService, minConfidence = 0.3)
+        ).run(testCommits.filter { it.files.size in 1..50 }, chunkSize = 25)
 
         println("Starting error prevention evaluation")
         val preventionResult = Experiment(
             ErrorPreventionEvaluation(rulesService, minConfidence = 0.95)
-        ).run(testCommits.filter { it.files.size > 1 }, chunkSize = 3)
+        ).run(testCommits.filter { it.files.size in 2..50 }, chunkSize = 3)
 
         println("Starting false alarm evaluation")
         val falseAlarmResult = Experiment(
             FalseAlarmEvaluation(rulesService, minConfidence = 0.95)
-        ).run(testCommits, chunkSize = 5)
+        ).run(testCommits.filter { it.files.size in 1..50 }, chunkSize = 5)
         val evaluationTime = currentTimeMillis() - evaluationStartTime
 
         return mapOf(
