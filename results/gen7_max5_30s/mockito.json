@@ -1,0 +1,367 @@
+{
+  "18" : {
+    "navigation" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : 0.0,
+      "fairCorrectInTop" : "NaN"
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 7,
+    "evaluationTime" : 25,
+    "itemsetsSize" : 197
+  },
+  "17" : {
+    "navigation" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : 0.0,
+      "fairCorrectInTop" : "NaN"
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 6,
+    "evaluationTime" : 104,
+    "itemsetsSize" : 231
+  },
+  "16" : {
+    "navigation" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : 0.0,
+      "fairCorrectInTop" : "NaN"
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 7,
+    "evaluationTime" : 26,
+    "itemsetsSize" : 276
+  },
+  "15" : {
+    "navigation" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : 0.0,
+      "fairCorrectInTop" : "NaN"
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : 0.0,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 11,
+    "evaluationTime" : 44,
+    "itemsetsSize" : 320
+  },
+  "14" : {
+    "navigation" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 2.477393781741608E-5,
+      "fairRecall" : 2.477393781741608E-5,
+      "fairCorrectInTop" : 1.0
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 3.716090672612412E-4,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 9,
+    "evaluationTime" : 43,
+    "itemsetsSize" : 407
+  },
+  "13" : {
+    "navigation" : {
+      "precision" : 0.9947974730583427,
+      "fairPrecision" : 0.3333333333333333,
+      "recall" : 9.492764035567766E-5,
+      "fairRecall" : 9.492764035567766E-5,
+      "fairCorrectInTop" : 0.3333333333333333
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 3.716090672612412E-4,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 13,
+    "evaluationTime" : 222,
+    "itemsetsSize" : 5446
+  },
+  "12" : {
+    "navigation" : {
+      "precision" : 0.9947974730583427,
+      "fairPrecision" : 0.3333333333333333,
+      "recall" : 9.492764035567766E-5,
+      "fairRecall" : 9.492764035567766E-5,
+      "fairCorrectInTop" : 0.3333333333333333
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 3.716090672612412E-4,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 25,
+    "evaluationTime" : 325,
+    "itemsetsSize" : 7555
+  },
+  "11" : {
+    "navigation" : {
+      "precision" : 0.9933110367892977,
+      "fairPrecision" : 0.5609756097560976,
+      "recall" : 6.506134498198227E-4,
+      "fairRecall" : 6.506134498198227E-4,
+      "fairCorrectInTop" : 0.5609756097560976
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 0.0014864362690449647,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 18,
+    "evaluationTime" : 311,
+    "itemsetsSize" : 7840
+  },
+  "10" : {
+    "navigation" : {
+      "precision" : 0.9918246005202527,
+      "fairPrecision" : 0.6206896551724138,
+      "recall" : 7.245765299121103E-4,
+      "fairRecall" : 7.245765299121103E-4,
+      "fairCorrectInTop" : 0.6206896551724138
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 0.0014864362690449647,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 21,
+    "evaluationTime" : 391,
+    "itemsetsSize" : 8258
+  },
+  "9" : {
+    "navigation" : {
+      "precision" : 0.9847640282422891,
+      "fairPrecision" : 0.5543478260869565,
+      "recall" : 0.0020045847026223867,
+      "fairRecall" : 0.0020045847026223867,
+      "fairCorrectInTop" : 0.5760869565217391
+    },
+    "prevention" : {
+      "precision" : 1.0,
+      "fairPrecision" : 1.0,
+      "recall" : 0.0014864362690449647,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 1.0,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 21,
+    "evaluationTime" : 415,
+    "itemsetsSize" : 11576
+  },
+  "8" : {
+    "navigation" : {
+      "precision" : 0.9762170196952805,
+      "fairPrecision" : 0.5428571428571428,
+      "recall" : 0.0026721345502477654,
+      "fairRecall" : 0.0026721345502477654,
+      "fairCorrectInTop" : 0.5928571428571429
+    },
+    "prevention" : {
+      "precision" : 0.803604607952434,
+      "fairPrecision" : 0.01948051948051948,
+      "recall" : 0.004087699739873653,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.998015873015873,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 53,
+    "evaluationTime" : 835,
+    "itemsetsSize" : 23231
+  },
+  "7" : {
+    "navigation" : {
+      "precision" : 0.9663693794128577,
+      "fairPrecision" : 0.6013215859030837,
+      "recall" : 0.003152937400306349,
+      "fairRecall" : 0.003152937400306349,
+      "fairCorrectInTop" : 0.6828193832599119
+    },
+    "prevention" : {
+      "precision" : 0.3900408769973987,
+      "fairPrecision" : 0.011204819277108428,
+      "recall" : 0.0189520624303233,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.9900793650793651,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 58,
+    "evaluationTime" : 2000,
+    "itemsetsSize" : 56030
+  },
+  "6" : {
+    "navigation" : {
+      "precision" : 0.9423749358531965,
+      "fairPrecision" : 0.6334065068107623,
+      "recall" : 0.004210349533652152,
+      "fairRecall" : 0.004210349533652152,
+      "fairCorrectInTop" : 0.7257683215130024
+    },
+    "prevention" : {
+      "precision" : 0.3372971633841199,
+      "fairPrecision" : 0.017447199265381054,
+      "recall" : 0.054626532887402456,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.9742063492063492,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 127,
+    "evaluationTime" : 6586,
+    "itemsetsSize" : 152203
+  },
+  "5" : {
+    "navigation" : {
+      "precision" : 0.9043646369733327,
+      "fairPrecision" : 0.6430585826563634,
+      "recall" : 0.007074228901062905,
+      "fairRecall" : 0.007074228901062905,
+      "fairCorrectInTop" : 0.7461858529819695
+    },
+    "prevention" : {
+      "precision" : 0.30933269628921883,
+      "fairPrecision" : 0.023339088657007744,
+      "recall" : 0.07989594946116685,
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "falseAlarm" : {
+      "precision" : 0.9484126984126984,
+      "fairPrecision" : "NaN",
+      "recall" : "NaN",
+      "fairRecall" : "NaN",
+      "fairCorrectInTop" : "NaN"
+    },
+    "miningTime" : 593,
+    "evaluationTime" : 82503,
+    "itemsetsSize" : 973997
+  },
+  "commitsSize" : 5046
+}
