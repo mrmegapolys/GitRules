@@ -12,12 +12,12 @@ private val projects = listOf(
     "lombok",
     "mockito",
     "netty",
-//    "tradehub"
+    "tradehub"
 )
 
 private val supports = 18 downTo 1
 
-fun main() {
+fun main1() {
     val objectWriter = jacksonObjectMapper()
         .writerWithDefaultPrettyPrinter()
 
@@ -48,5 +48,26 @@ fun main() {
             File("$resultFolder/$project.json"),
             results + ("commitsSize" to commits.size)
         )
+    }
+}
+
+fun main() {
+    projects.forEach { project ->
+        val commits = SimpleGitLogFileDataSource("input/$project.txt")
+            .getCommits()
+        val median = commits
+            .map { it.files.size }
+            .sorted()
+            .run {
+                when {
+                    size % 2 == 0 -> {
+                        ((this[size / 2] + this[size / 2 - 1]).toDouble() / 2)
+                    }
+                    else -> {
+                        (this[size / 2]).toDouble()
+                    }
+                }
+            }
+        println("$project $median")
     }
 }
